@@ -174,13 +174,6 @@ int main(int argc, char **argv) {
     sudoku.colunas = colunas;
     sudoku.colunaSub = colunaSub;
 
-
-    for (int i = 0; i < linhas; i++) {
-        for (int j = 0; j < colunas; j++) {
-            printf("%d", sudoku.matriz[i][j]);
-        }
-        printf("\n");
-    }
     pthread_t threadsLinha[sudoku.linhas];
     pthread_t threadsColuna[sudoku.colunas];
     pthread_t threadsSub[sudoku.linhas];
