@@ -10,6 +10,9 @@ typedef struct{
     int linhaSub;
     int colunaSub;
     int **matriz;
+    int verdadeiro;
+    int verdadeiro2;
+    int verdadeiro3;
 }Sudoku;
 
 typedef struct {
@@ -17,7 +20,6 @@ typedef struct {
     int valorId;
 } ThreadParametros;
 
-int verdadeiro,verdadeiro2,verdadeiro3;
 // Função para verificar se as linhas possuem valores iguais
 void *checandoValoresLinha(void* args) {
 
@@ -27,7 +29,7 @@ void *checandoValoresLinha(void* args) {
         for (int colunasNum = 0; colunasNum < thread_parametros->sudoku->colunas; colunasNum++) {
             for (int copia = colunasNum + 1; copia < thread_parametros->sudoku->colunas; copia++) {
                 if (thread_parametros->sudoku->matriz[linhaNum][colunasNum] == thread_parametros->sudoku->matriz[linhaNum][copia]) {
-                    verdadeiro = 1; 
+                    thread_parametros->sudoku->verdadeiro = 1; 
                 }
             }
         }
@@ -42,7 +44,7 @@ void *checandoValoresColuna(void* args) {
         for (int linhasNum = 0; linhasNum < thread_parametros->sudoku->linhas; linhasNum++) {
             for (int copia = linhasNum + 1; copia < thread_parametros->sudoku->linhas; copia++) {
                 if (thread_parametros->sudoku->matriz[linhasNum][colunasNum] == thread_parametros->sudoku->matriz[copia][colunasNum]) {
-                    verdadeiro2 = 1;
+                    thread_parametros->sudoku->verdadeiro2= 1;
                 }
             }
         }
@@ -60,7 +62,7 @@ void *checandoValoresSub(void* args) {
                     for (int finalCopiaLinha = copiaSubLinhas; finalCopiaLinha < subLinhasNum + thread_parametros->sudoku->linhaSub; finalCopiaLinha++) {
                         for (int finalCopiaColuna = copiaSubColunas + 1; finalCopiaColuna < subColunasNum + thread_parametros->sudoku->colunaSub; finalCopiaColuna++) {
                             if (thread_parametros->sudoku->matriz[copiaSubLinhas][copiaSubColunas] == thread_parametros->sudoku->matriz[finalCopiaLinha][finalCopiaColuna]) {
-                                verdadeiro3 = 1;
+                                thread_parametros->sudoku->verdadeiro3= 1;
                             }
                         }
                     }
@@ -121,7 +123,7 @@ int main(int argc, char **argv) {
         printf("File out of format");
         exit(0);
     }
-    Sudoku sudoku = {linhas,colunas,linhaSub,colunaSub, NULL};
+    Sudoku sudoku = {linhas,colunas,linhaSub,colunaSub, NULL,0,0,0};
 
     sudoku.matriz = malloc(linhas * sizeof(int *));
     for (int i = 0; i < linhas; i++) {
@@ -201,6 +203,9 @@ int main(int argc, char **argv) {
     }
     char *output = "output.txt";
     FILE *outputFile = fopen(output, "w");
+    int verdadeiro = sudoku.verdadeiro;
+    int verdadeiro2 = sudoku.verdadeiro2;
+    int verdadeiro3 = sudoku.verdadeiro3;
     if(verdadeiro == 1 || verdadeiro2 == 1 || verdadeiro3 == 1){
          fprintf(outputFile, "FAIL\n");
     }
