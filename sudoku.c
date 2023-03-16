@@ -199,12 +199,13 @@ int main(int argc, char **argv) {
         pthread_join(threadsColuna[t], NULL);
         pthread_join(threadsSub[t], NULL);
     }
-    
+    char *output = "output.txt";
+    FILE *outputFile = fopen(output, "w");
     if(verdadeiro == 1 || verdadeiro2 == 1 || verdadeiro3 == 1){
-        printf("valores iguais");
+         fprintf(outputFile, "FAIL\n");
     }
     else{
-        printf("valores diferentes");
+        fprintf(outputFile, "SUCCESS\n");
     }
     printf("%d", contaThread);
     free(sudoku.matriz);
