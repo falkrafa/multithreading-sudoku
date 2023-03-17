@@ -55,18 +55,14 @@ void *checandoValoresColuna(void* args) {
 void *checandoValoresSub(void* args) {
     ThreadParametros* thread_parametros = (ThreadParametros*) args;
 
-    for (int subLinhasNum = 0; subLinhasNum < thread_parametros->sudoku->linhas; subLinhasNum += thread_parametros->sudoku->linhaSub) {
-        for (int subColunasNum = 0; subColunasNum < thread_parametros->sudoku->colunas; subColunasNum += thread_parametros->sudoku->colunaSub) {
-            for (int copiaSubLinhas = subLinhasNum; copiaSubLinhas < subLinhasNum + thread_parametros->sudoku->linhaSub; copiaSubLinhas++) {
-                for (int copiaSubColunas = subColunasNum; copiaSubColunas < subColunasNum + thread_parametros->sudoku->colunaSub; copiaSubColunas++) {
-                    for (int finalCopiaLinha = copiaSubLinhas; finalCopiaLinha < subLinhasNum + thread_parametros->sudoku->linhaSub; finalCopiaLinha++) {
-                        for (int finalCopiaColuna = copiaSubColunas + 1; finalCopiaColuna < subColunasNum + thread_parametros->sudoku->colunaSub; finalCopiaColuna++) {
-                            if (thread_parametros->sudoku->matriz[copiaSubLinhas][copiaSubColunas] == thread_parametros->sudoku->matriz[finalCopiaLinha][finalCopiaColuna]) {
-                                thread_parametros->sudoku->verdadeiro3= 1;
-                            }
-                        }
-                    }
-                }
+    for (int i = 0; i < thread_parametros->sudoku->linhaSub * thread_parametros->sudoku->colunaSub; i++) {
+        int linha = (i / thread_parametros->sudoku->linhaSub) * thread_parametros->sudoku->linhaSub;
+        int coluna = (i % thread_parametros->sudoku->colunaSub) * thread_parametros->sudoku->colunaSub;
+        for (int j = 0; j < thread_parametros->sudoku->linhaSub * thread_parametros->sudoku->colunaSub; j++) {
+            int linha2 = (j / thread_parametros->sudoku->linhaSub) *  thread_parametros->sudoku->linhaSub;
+            int coluna2 = (j % thread_parametros->sudoku->colunaSub) * thread_parametros->sudoku->colunaSub;
+            if (i != j && thread_parametros->sudoku->matriz[linha + (j / thread_parametros->sudoku->colunaSub)][coluna + (j % thread_parametros->sudoku->colunaSub)] == thread_parametros->sudoku->matriz[linha + (i / thread_parametros->sudoku->colunaSub)][coluna + (i % thread_parametros->sudoku->colunaSub)]) {
+                thread_parametros->sudoku->verdadeiro3 = 1;
             }
         }
     }
