@@ -1,0 +1,12 @@
+As threads foram utilizadas a fim de rodar cada função de validação, para a implementacao das 
+threads foi necessario um struct chamado ThreadParametro que possui como atributos o struct do 
+sudoku e valorId. No main do programa, foi criado tres array de thread: threadLinha, threadColuna e 
+threadSub, com tamanho sudoku.linhas em threadLinha,threadSub e tamanho sudoku.colunas em threadColunas. 
+
+Após declarar os arrays, fiz uma alocação de memoria no array de struct da thread. 
+Para realizar a criação das thread, fiz o uso de pthread_create e implementei dentro de um for que irá rodar 9 vezes criando 
+sempre 27 threads: 9 para fazer a checagem das linhas, 9 para realizar a checagem das colunas e 9 para checar as subgrades. 
+Para fazer com que as threads executem as funcoes, fiz a chamada de cada uma passando os arrays citados acima em pthreads separadas 
+juntamente com a funcao e passando os valores do struct em thread_parametro. Para chamar as threads nas funcoes tive que transformar 
+as funcoes em void e passar args como paramentro e esses argumentos são recebidos a partir da struct ThreadParametros. Para saber se 
+a thread terminou a sua execução, criei um for que irá rodar tambem 9 vezes, a fim de atingir todas as 27 threads e fiz o uso de pthread_join.

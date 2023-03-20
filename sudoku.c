@@ -17,8 +17,8 @@ typedef struct{
 
 typedef struct {
     int valorId;
-    int comeco;
-    int fim;
+    // int comeco;
+    // int fim;
     Sudoku* sudoku;
 } ThreadParametros;
 
@@ -54,14 +54,18 @@ void *checandoValoresColuna(void* args) {
 void *checandoValoresSub(void* args) {
     ThreadParametros* thread_parametros = (ThreadParametros*) args;
 
-    for (int i = 0; i < thread_parametros->sudoku->linhaSub * thread_parametros->sudoku->colunaSub; i++) {
-        int linha = (i / thread_parametros->sudoku->linhaSub) * thread_parametros->sudoku->linhaSub;
-        int coluna = (i % thread_parametros->sudoku->colunaSub) * thread_parametros->sudoku->colunaSub;
-        for (int j = 0; j < thread_parametros->sudoku->linhaSub * thread_parametros->sudoku->colunaSub; j++) {
-            int linha2 = (j / thread_parametros->sudoku->linhaSub) *  thread_parametros->sudoku->linhaSub;
-            int coluna2 = (j % thread_parametros->sudoku->colunaSub) * thread_parametros->sudoku->colunaSub;
-            if (i != j && thread_parametros->sudoku->matriz[linha + (j / thread_parametros->sudoku->colunaSub)][coluna + (j % thread_parametros->sudoku->colunaSub)] == thread_parametros->sudoku->matriz[linha + (i / thread_parametros->sudoku->colunaSub)][coluna + (i % thread_parametros->sudoku->colunaSub)]) {
-                thread_parametros->sudoku->verdadeiro3 = 1;
+    for (int subLinhasNum = 0; subLinhasNum < thread_parametros->sudoku->linhas; subLinhasNum += thread_parametros->sudoku->linhaSub) {
+        for (int subColunasNum = 0; subColunasNum < thread_parametros->sudoku->colunas; subColunasNum += thread_parametros->sudoku->colunaSub) {
+            for (int copiaSubLinhas = subLinhasNum; copiaSubLinhas < subLinhasNum + thread_parametros->sudoku->linhaSub; copiaSubLinhas++) {
+                for (int copiaSubColunas = subColunasNum; copiaSubColunas < subColunasNum + thread_parametros->sudoku->colunaSub; copiaSubColunas++) {
+                    for (int finalCopiaLinha = copiaSubLinhas; finalCopiaLinha < subLinhasNum + thread_parametros->sudoku->linhaSub; finalCopiaLinha++) {
+                        for (int finalCopiaColuna = copiaSubColunas + 1; finalCopiaColuna < subColunasNum + thread_parametros->sudoku->colunaSub; finalCopiaColuna++) {
+                            if (thread_parametros->sudoku->matriz[copiaSubLinhas][copiaSubColunas] == thread_parametros->sudoku->matriz[finalCopiaLinha][finalCopiaColuna]) {
+                                thread_parametros->sudoku->verdadeiro3= 1;
+                            }
+                        }
+                    }
+                }
             }
         }
     }
@@ -70,7 +74,7 @@ void *checandoValoresSub(void* args) {
 int main(int argc, char **argv) {
 
     //vendo se passou parametros suficiente
-    if (argv[1] == 0) {
+    if (argv[1] == 0 || argc > 2) {
         printf("Invalid number of parameters\n");
         exit(0);
     }
@@ -138,7 +142,6 @@ int main(int argc, char **argv) {
             exit(0);
         }
         char *tok = strtok(valorLinha, " ");
-        // vendo se tem espaco em branco
         for (int j = 0; j < colunas; j++) {
             if(tok == NULL){
                 printf("File out of format\n");
@@ -185,7 +188,7 @@ int main(int argc, char **argv) {
         pthread_create(&threadsLinha[t], NULL, checandoValoresLinha, &thread_parametros[t]);
         pthread_create(&threadsColuna[t], NULL, checandoValoresColuna, &thread_parametros[t]);
         pthread_create(&threadsSub[t], NULL, checandoValoresSub, &thread_parametros[t]);
-        contaThread+=3;
+        // contaThread+=3;
     }
 
     for (int t = 0; t < 9; t++){
@@ -205,7 +208,7 @@ int main(int argc, char **argv) {
     else{
         fprintf(outputFile, "SUCCESS\n");
     }
-    printf("%d", contaThread);
+    // printf("%d", contaThread);
     free(sudoku.matriz);
     fclose(input);
     free(thread_parametros);
