@@ -3,7 +3,7 @@
 #include <string.h>
 #include <pthread.h>
 
-#define MAX_SIZE 1000
+#define MAX_SIZE 10000
 typedef struct{
     int linhas;
     int colunas;
@@ -16,11 +16,12 @@ typedef struct{
 }Sudoku;
 
 typedef struct {
-    Sudoku* sudoku;
     int valorId;
+    int comeco;
+    int fim;
+    Sudoku* sudoku;
 } ThreadParametros;
 
-// Função para verificar se as linhas possuem valores iguais
 void *checandoValoresLinha(void* args) {
 
     ThreadParametros* thread_parametros = (ThreadParametros*) args;
@@ -36,7 +37,6 @@ void *checandoValoresLinha(void* args) {
     }
 }
 
-// Função para verificar se as colunas possuem valores iguais
 void *checandoValoresColuna(void* args) {
     ThreadParametros* thread_parametros = (ThreadParametros*) args;
 
@@ -51,7 +51,6 @@ void *checandoValoresColuna(void* args) {
     }
 }
 
-// Função para verificar se as subgrades possuem valores iguais
 void *checandoValoresSub(void* args) {
     ThreadParametros* thread_parametros = (ThreadParametros*) args;
 
@@ -119,6 +118,10 @@ int main(int argc, char **argv) {
         printf("File out of format");
         exit(0);
     }
+    if((linhaSub * colunaSub) != linhas){
+        printf("File out of format\n");
+        exit(0);
+    }
     Sudoku sudoku = {linhas,colunas,linhaSub,colunaSub, NULL,0,0,0};
 
     sudoku.matriz = malloc(linhas * sizeof(int *));
@@ -169,28 +172,29 @@ int main(int argc, char **argv) {
     sudoku.linhaSub = linhaSub;
     sudoku.colunas = colunas;
     sudoku.colunaSub = colunaSub;
-
+    int contaThread = 0;
     pthread_t threadsLinha[sudoku.linhas];
     pthread_t threadsColuna[sudoku.colunas];
     pthread_t threadsSub[sudoku.linhas];
-    ThreadParametros thread_parametros[sudoku.linhas];
+    ThreadParametros* thread_parametros = malloc(sudoku.linhas * sizeof(ThreadParametros));
 
-    int contaThread =0;
     
-    for(int t = 0; t < sudoku.linhas; t++){
+    for(int t = 0; t < 9; t++){
         thread_parametros[t].sudoku = &sudoku;
         thread_parametros[t].valorId = t;
         pthread_create(&threadsLinha[t], NULL, checandoValoresLinha, &thread_parametros[t]);
         pthread_create(&threadsColuna[t], NULL, checandoValoresColuna, &thread_parametros[t]);
         pthread_create(&threadsSub[t], NULL, checandoValoresSub, &thread_parametros[t]);
-        contaThread += 3;
+        contaThread+=3;
     }
-    for (int t = 0; t < sudoku.linhas; t++){
+
+    for (int t = 0; t < 9; t++){
         pthread_join(threadsLinha[t], NULL);
         pthread_join(threadsColuna[t], NULL);
         pthread_join(threadsSub[t], NULL);
     }
-    char *output = "output.txt";
+
+    char *output = "sudoku_rmf2.out";
     FILE *outputFile = fopen(output, "w");
     int verdadeiro = sudoku.verdadeiro;
     int verdadeiro2 = sudoku.verdadeiro2;
@@ -204,6 +208,7 @@ int main(int argc, char **argv) {
     printf("%d", contaThread);
     free(sudoku.matriz);
     fclose(input);
+    free(thread_parametros);
 
     return 0;
 }
