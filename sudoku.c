@@ -74,7 +74,7 @@ void *checandoValoresSub(void* args) {
 int main(int argc, char **argv) {
 
     if (argv[1] == 0 || argc > 2) {
-        printf("Invalid number of parameters\n");
+        printf("Invalid number of parameters");
         exit(0);
     }
 
@@ -82,7 +82,7 @@ int main(int argc, char **argv) {
     char valorLinha[MAX_SIZE];
 
     if(input == NULL){
-        printf("Error to read file\n");
+        printf("Error to read file");
         exit(0);
     }
 
@@ -130,7 +130,7 @@ int main(int argc, char **argv) {
     for (int i = 0; i < linhas; i++) {
         pegaLinha = fgets(valorLinha, MAX_SIZE, input);
         if (pegaLinha == NULL) {
-            printf("File out format");
+            printf("File out of format");
             exit(0);
         }
         char *tok = strtok(valorLinha, " ");
@@ -195,10 +195,10 @@ int main(int argc, char **argv) {
     int verdadeiro2 = sudoku.verdadeiro2;
     int verdadeiro3 = sudoku.verdadeiro3;
     if(verdadeiro == 1 || verdadeiro2 == 1 || verdadeiro3 == 1){
-         fprintf(outputFile, "FAIL\n");
+         fprintf(outputFile, "FAIL");
     }
     else{
-        fprintf(outputFile, "SUCCESS\n");
+        fprintf(outputFile, "SUCCESS");
     }
     // printf("%d", contaThread);
     free(sudoku.matriz);
